@@ -176,6 +176,7 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>qq', '<cmd>qa<cr>', { desc = '[Q]uit all windows' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -892,20 +893,59 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+    'loctvl842/monokai-pro.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
+      require('monokai-pro').setup {
+        filter = 'classic', -- classic, octagon, pro, machine, ristretto, spectrum
         styles = {
-          comments = { italic = false }, -- Disable italics in comments
+          comment = { italic = false },
         },
+        background_clear = { 'telescope', 'neo-tree', 'float_win' },
+        override = function()
+          return {
+            Normal = { bg = '#000000', fg = '#ffffff' },
+            NormalNC = { bg = '#000000', fg = '#ffffff' },
+            NormalFloat = { bg = '#0a0a0a' },
+            SignColumn = { bg = '#000000' },
+            LineNr = { bg = '#000000' },
+            CursorLineNr = { bg = '#000000' },
+            EndOfBuffer = { bg = '#000000' },
+            StatusLine = { bg = '#000000' },
+            StatusLineNC = { bg = '#000000' },
+            WinSeparator = { bg = '#000000', fg = '#333333' },
+          }
+        end,
       }
 
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'monokai-pro'
+
+      -- Defer overrides so they apply AFTER monokai-pro finishes all its setup
+      vim.schedule(function()
+        local hl = vim.api.nvim_set_hl
+        -- Telescope
+        hl(0, 'TelescopeNormal', { bg = '#000000', fg = '#ffffff' })
+        hl(0, 'TelescopeBorder', { bg = '#000000', fg = '#555555' })
+        hl(0, 'TelescopePromptNormal', { bg = '#000000', fg = '#ffffff' })
+        hl(0, 'TelescopePromptBorder', { bg = '#000000', fg = '#555555' })
+        hl(0, 'TelescopePromptTitle', { bg = '#000000', fg = '#f92672' })
+        hl(0, 'TelescopeResultsNormal', { bg = '#000000', fg = '#ffffff' })
+        hl(0, 'TelescopeResultsBorder', { bg = '#000000', fg = '#555555' })
+        hl(0, 'TelescopeResultsTitle', { bg = '#000000', fg = '#a6e22e' })
+        hl(0, 'TelescopePreviewNormal', { bg = '#000000', fg = '#ffffff' })
+        hl(0, 'TelescopePreviewBorder', { bg = '#000000', fg = '#555555' })
+        hl(0, 'TelescopePreviewTitle', { bg = '#000000', fg = '#66d9ef' })
+        hl(0, 'TelescopeSelection', { bg = '#1a1a1a', fg = '#ffffff' })
+        -- Neo-tree
+        hl(0, 'NeoTreeNormal', { bg = '#000000', fg = '#ffffff' })
+        hl(0, 'NeoTreeNormalNC', { bg = '#000000', fg = '#ffffff' })
+        hl(0, 'NeoTreeEndOfBuffer', { bg = '#000000' })
+        hl(0, 'NeoTreeWinSeparator', { bg = '#000000', fg = '#333333' })
+        hl(0, 'NeoTreeDirectoryName', { fg = '#ffffff' })
+        hl(0, 'NeoTreeDirectoryIcon', { fg = '#e0e0e0' })
+        hl(0, 'NeoTreeFileName', { fg = '#dddddd' })
+        hl(0, 'NeoTreeRootName', { fg = '#ffffff', bold = true })
+      end)
     end,
   },
 

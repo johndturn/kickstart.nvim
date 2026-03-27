@@ -51,7 +51,6 @@ return {
       }
 
       lint.linters_by_ft = {
-        markdown = { 'markdownlint' },
         typescript = { 'oxlint' },
         typescriptreact = { 'oxlint' },
         javascript = { 'oxlint' },

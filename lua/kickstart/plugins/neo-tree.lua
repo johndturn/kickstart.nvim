@@ -31,6 +31,11 @@ return {
       window = {
         mappings = {
           ['\\'] = 'close_window',
+          ['<leader>rf'] = function(state)
+            local node = state.tree:get_node()
+            local path = node:get_id()
+            vim.fn.jobstart({ 'open', '-R', path }, { detach = true })
+          end,
           --
           -- Jump up to parent directory on file or closed directory, or close on open directory
           ['h'] = function(state)

@@ -775,7 +775,7 @@ require('lazy').setup({
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 3000,
             lsp_format = 'fallback',
           }
         end
@@ -783,11 +783,13 @@ require('lazy').setup({
       formatters = {
         oxfmt = {
           condition = function(_, ctx)
-            local local_bin = ctx.cwd .. '/node_modules/.bin/oxfmt'
+            local cwd = (ctx and ctx.cwd) or vim.fn.getcwd()
+            local local_bin = cwd .. '/node_modules/.bin/oxfmt'
             return vim.fn.filereadable(local_bin) == 1 or vim.fn.executable 'oxfmt' == 1
           end,
           command = function(_, ctx)
-            local local_bin = ctx.cwd .. '/node_modules/.bin/oxfmt'
+            local cwd = (ctx and ctx.cwd) or vim.fn.getcwd()
+            local local_bin = cwd .. '/node_modules/.bin/oxfmt'
             if vim.fn.filereadable(local_bin) == 1 then
               return local_bin
             end

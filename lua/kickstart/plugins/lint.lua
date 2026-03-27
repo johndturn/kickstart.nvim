@@ -5,8 +5,57 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       local lint = require 'lint'
+
+      lint.linters.oxlint = {
+        name = 'oxlint',
+        cmd = function()
+          local local_bin = vim.fn.getcwd() .. '/node_modules/.bin/oxlint'
+          if vim.fn.filereadable(local_bin) == 1 then
+            return local_bin
+          end
+          return 'oxlint'
+        end,
+        stdin = false,
+        args = { '--format', 'json' },
+        stream = 'stdout',
+        ignore_exitcode = true,
+        parser = function(output)
+          if output == '' then
+            return {}
+          end
+          local ok, decoded = pcall(vim.json.decode, output)
+          if not ok or not decoded then
+            return {}
+          end
+          local diagnostics = {}
+          local severities = {
+            [1] = vim.diagnostic.severity.WARN,
+            [2] = vim.diagnostic.severity.ERROR,
+          }
+          for _, file_result in ipairs(decoded) do
+            for _, msg in ipairs(file_result.messages or {}) do
+              table.insert(diagnostics, {
+                lnum = (msg.line or 1) - 1,
+                col = (msg.column or 1) - 1,
+                end_lnum = msg.endLine and (msg.endLine - 1) or nil,
+                end_col = msg.endColumn and (msg.endColumn - 1) or nil,
+                severity = severities[msg.severity] or vim.diagnostic.severity.WARN,
+                message = msg.message,
+                source = 'oxlint',
+                code = msg.ruleId,
+              })
+            end
+          end
+          return diagnostics
+        end,
+      }
+
       lint.linters_by_ft = {
         markdown = { 'markdownlint' },
+        typescript = { 'oxlint' },
+        typescriptreact = { 'oxlint' },
+        javascript = { 'oxlint' },
+        javascriptreact = { 'oxlint' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,

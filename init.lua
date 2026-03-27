@@ -689,6 +689,8 @@ require('lazy').setup({
         -- ts_ls = {},
         --
 
+        svelte = {},
+
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -778,13 +780,40 @@ require('lazy').setup({
           }
         end
       end,
+      formatters = {
+        oxfmt = {
+          condition = function(_, ctx)
+            local local_bin = ctx.cwd .. '/node_modules/.bin/oxfmt'
+            return vim.fn.filereadable(local_bin) == 1 or vim.fn.executable 'oxfmt' == 1
+          end,
+          command = function(_, ctx)
+            local local_bin = ctx.cwd .. '/node_modules/.bin/oxfmt'
+            if vim.fn.filereadable(local_bin) == 1 then
+              return local_bin
+            end
+            return 'oxfmt'
+          end,
+          args = { '--stdin-filepath', '$FILENAME' },
+          stdin = true,
+        },
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        typescript = { 'oxfmt', 'prettier', stop_after_first = true },
+        typescriptreact = { 'oxfmt', 'prettier', stop_after_first = true },
+        javascript = { 'oxfmt', 'prettier', stop_after_first = true },
+        javascriptreact = { 'oxfmt', 'prettier', stop_after_first = true },
+        css = { 'oxfmt', 'prettier', stop_after_first = true },
+        scss = { 'oxfmt', 'prettier', stop_after_first = true },
+        less = { 'oxfmt', 'prettier', stop_after_first = true },
+        html = { 'oxfmt', 'prettier', stop_after_first = true },
+        json = { 'oxfmt', 'prettier', stop_after_first = true },
+        jsonc = { 'oxfmt', 'prettier', stop_after_first = true },
+        yaml = { 'oxfmt', 'prettier', stop_after_first = true },
+        markdown = { 'oxfmt', 'prettier', stop_after_first = true },
+        graphql = { 'oxfmt', 'prettier', stop_after_first = true },
+        toml = { 'oxfmt', 'prettier', stop_after_first = true },
+        svelte = { 'prettier' },
       },
     },
   },
@@ -996,7 +1025,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'svelte' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1027,9 +1056,10 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.toggleterm',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`

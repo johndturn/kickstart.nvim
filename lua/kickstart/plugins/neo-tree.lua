@@ -12,6 +12,7 @@ return {
   lazy = false,
   keys = {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '<leader>gs', ':Neotree git_status<CR>', desc = 'Git Status sidebar', silent = true },
   },
   opts = {
     enable_git_status = true,

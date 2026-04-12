@@ -1006,6 +1006,23 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
+      -- VS Code-like minimap / scrollbar
+      local map = require 'mini.map'
+      map.setup {
+        integrations = {
+          map.gen_integration.builtin_search(),
+          map.gen_integration.gitsigns(),
+          map.gen_integration.diagnostic(),
+        },
+        window = {
+          focusable = false,
+          width = 10,
+          winblend = 25,
+        },
+      }
+      vim.keymap.set('n', '<leader>mm', map.toggle, { desc = 'Toggle [M]ini[M]ap' })
+      vim.keymap.set('n', '<leader>mr', map.refresh, { desc = '[M]inimap [R]efresh' })
+
       -- Statusline is handled by lualine (see separate plugin spec below)
 
       -- ... and there is more!

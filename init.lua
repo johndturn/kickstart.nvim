@@ -683,7 +683,15 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        pyright = {},
+        -- Python: ruff for lint/format/code-actions; ty (type checker) is
+        -- enabled separately below since it ships only as a new-style
+        -- vim.lsp.config and isn't managed by mason-lspconfig.
+        ruff = {
+          on_attach = function(client)
+            -- Defer hover to ty (avoids duplicate hover popups).
+            client.server_capabilities.hoverProvider = false
+          end,
+        },
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -745,6 +753,11 @@ require('lazy').setup({
           end,
         },
       }
+
+      -- ty (Astral's Python type checker) ships only as a new-style
+      -- vim.lsp.config (lsp/ty.lua in nvim-lspconfig). Enable it directly.
+      vim.lsp.config('ty', { capabilities = capabilities })
+      vim.lsp.enable 'ty'
     end,
   },
 

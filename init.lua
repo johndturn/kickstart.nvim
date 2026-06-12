@@ -153,6 +153,16 @@ vim.o.splitbelow = true
 vim.o.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
+-- Treat extensionless config dotfiles as JSON so jsonls (+ SchemaStore) attaches
+-- and provides completion/validation (e.g. .prettierrc, .babelrc, .eslintrc).
+vim.filetype.add {
+  filename = {
+    ['.prettierrc'] = 'json',
+    ['.babelrc'] = 'json',
+    ['.eslintrc'] = 'json',
+  },
+}
+
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
 
@@ -501,6 +511,10 @@ require('lazy').setup({
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
+
+      -- JSON/YAML schemas from SchemaStore (same catalog VS Code uses):
+      -- powers completion/validation for .prettierrc, tsconfig.json, etc.
+      'b0o/SchemaStore.nvim',
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -703,6 +717,17 @@ require('lazy').setup({
         --
 
         svelte = {},
+
+        -- JSON language server with SchemaStore catalog for autocomplete,
+        -- hover docs, and validation in config files (.prettierrc, tsconfig, etc.)
+        jsonls = {
+          settings = {
+            json = {
+              schemas = require('schemastore').json.schemas(),
+              validate = { enable = true },
+            },
+          },
+        },
 
         lua_ls = {
           -- cmd = { ... },
